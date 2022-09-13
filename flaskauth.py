@@ -22,7 +22,6 @@ def get_token_auth_header():
     """Obtains the Access Token from the Authorization Header
     """
     auth = request.headers.get('Authorization', None)
-    print(auth)
     if not auth:
         raise AuthError({
             'code': 'authorization_header_missing',
@@ -55,7 +54,12 @@ def get_token_auth_header():
 def verify_decode_jwt(token):
     jsonurl = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
     jwks = json.loads(jsonurl.read())
+    for x in jsonurl:
+        print(x)
+    print("url",jsonurl)
+    print("jwks",jwks)
     unverified_header = jwt.get_unverified_header(token)
+    print('unverififed:',unverified_header)
     rsa_key = {}
     if 'kid' not in unverified_header:
         raise AuthError({
@@ -72,6 +76,7 @@ def verify_decode_jwt(token):
                 'n': key['n'],
                 'e': key['e']
             }
+    print("rsa_key",rsa_key)
     if rsa_key:
         try:
             payload = jwt.decode(
@@ -121,5 +126,5 @@ def requires_auth(f):
 @app.route('/headers')
 @requires_auth
 def headers(payload):
-    print(payload)
+    print("payload",payload)
     return 'Access Granted '
