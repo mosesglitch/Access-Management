@@ -137,6 +137,7 @@ def requires_auth(f):
 
     return wrapper
 
+
 @app.route('/images')
 @requires_auth('get:image')
 def headers(payload):
